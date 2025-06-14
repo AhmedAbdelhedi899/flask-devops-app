@@ -1,14 +1,12 @@
-#Use an official python image
+# Dockerfile
 FROM python:3.9-slim
 
-#Set work directory
 WORKDIR /app
 
-#Copy app files
+COPY requirements.txt .
+RUN pip install --no-cache-dir -r requirements.txt
+
 COPY . .
 
-#Install Flask
-RUN pip install Flask
-
-#Run the app
+EXPOSE 5000
 CMD ["python", "app.py"]
