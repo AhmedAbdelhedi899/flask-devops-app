@@ -1,22 +1,27 @@
 pipeline {
     agent any
 
-    environment {
-        IMAGE = "flask-devops-app"
-        TAG = "latest"
-    }
-
     stages {
-        stage('Build Docker Image') {
+        stage('Clone repository') {
             steps {
-                sh 'docker build -t $IMAGE:$TAG .'
+                git branch: 'main', url: 'https://github.com/AhmedAbdelhedi899/flask-devops-app.git'
             }
         }
 
-        stage('Run Docker Container') {
+        stage('Build Docker image') {
             steps {
-                sh 'docker rm -f flask-app || true'
-                sh 'docker run -d -p 5000:5000 --name flask-app $IMAGE:$TAG'
+                script {
+                    dockerImage = docker.build("flask-devops-app:latest")
+                }
+            }
+        }
+
+        stage('Run Docker container') {
+            steps {
+                sh '''
+                docker rm -f flask-app || true
+                docker run -d -p 5000:5000 --name flask-app flask-devops-app:latest
+                '''
             }
         }
     }
